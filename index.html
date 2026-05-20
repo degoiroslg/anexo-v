@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="gl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aplicación para solicitar permisos e licenzas - ANEXO V">
+    <meta name="theme-color" content="#1f2937">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Permisos">
+    
+    <title>ANEXO V - Solicitude de Permisos</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231f2937' width='192' height='192'/><text x='50%' y='50%' font-size='100' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central'>A</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231f2937' width='180' height='180'/><text x='50%' y='50%' font-size='90' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central'>A</text></svg>">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f9fafb;
+            color: #1f2937;
+            height: 100%;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .app-header {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .app-header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .app-header p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .install-banner {
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            color: #1e40af;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        .install-banner.hidden {
+            display: none;
+        }
+        
+        .install-banner button {
+            background: #1e40af;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .install-banner button:active {
+            transform: scale(0.98);
+        }
+        
+        .container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .form-section {
+            background: white;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        
+        .form-section h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #1f2937;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.375rem;
+            color: #4b5563;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="time"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="time"]:focus,
+        input[type="date"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .radio-item,
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        
+        .radio-item:hover,
+        .checkbox-item:hover {
+            background-color: #f3f4f6;
+        }
+        
+        input[type="radio"],
+        input[type="checkbox"] {
+            margin-top: 0.25rem;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .radio-item label,
+        .checkbox-item label {
+            margin: 0;
+            font-weight: 400;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:active {
+            background: #2563eb;
+            transform: scale(0.98);
+        }
+        
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+        
+        .btn-secondary:active {
+            background: #d1d5db;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-success:active {
+            background: #059669;
+        }
+        
+        .documento-list {
+            background: #f0f9ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .documento-list h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #1e40af;
+        }
+        
+        .documento-list ol {
+            margin-left: 1.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .documento-list li {
+            margin-bottom: 0.375rem;
+            color: #1f2937;
+        }
+        
+        .documento-list.empty {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+            color: #6b7280;
+        }
+        
+        .success-message {
+            background: #d1fae5;
+            border: 1px solid #6ee7b7;
+            color: #065f46;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+        }
+        
+        @media (max-width: 480px) {
+            .grid-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .app-header h1 {
+                font-size: 1.125rem;
+            }
+        }
+        
+        .footer {
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <h1>📋 ANEXO V</h1>
+        <p>Solicitude de Permisos e Licenzas</p>
+    </div>
+    
+    <div class="install-banner hidden" id="installBanner">
+        <span>Instala esta app no teu teléfono</span>
+        <button onclick="installApp()">Instalar</button>
+        <button onclick="closeInstallBanner()" style="background: transparent; color: #1e40af; padding: 0;">✕</button>
+    </div>
+    
+    <div class="container">
+        <div class="success-message" id="successMessage">
+            ✅ Solicitude gardada correctamente!
+        </div>
+        
+        <form id="formulario">
+            <!-- SECCIÓN 1: DATOS DO SOLICITANTE -->
+            <div class="form-section">
+                <h2>1. Datos do Solicitante</h2>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="apellidos">Apelidos *</label>
+                        <input type="text" id="apellidos" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre">Nome *</label>
+                        <input type="text" id="nombre" required>
+                    </div>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="nif">NIF *</label>
+                        <input type="text" id="nif" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono móbil</label>
+                        <input type="tel" id="telefono">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="correo">Correo</label>
+                    <input type="email" id="correo">
+                </div>
+                
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label for="corpo">Corpo</label>
+                        <input type="text" id="corpo">
+                    </div>
+                    <div class="form-group">
+                        <label for="grupo">Grupo</label>
+                        <input type="text" id="grupo">
+                    </div>
+                    <div class="form-group">
+                        <label for="subgrupo">Subgrupo</label>
+                        <input type="text" id="subgrupo">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="centro">Centro de destino</label>
+                    <input type="text" id="centro" placeholder="IES...">
+                </div>
+                
+                <div class="form-group">
+                    <label>Relación xurídica *</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="r1" name="relacion" value="Persoal funcionario de carreira" required>
+                            <label for="r1">Persoal funcionario de carreira</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="r2" name="relacion" value="Persoal funcionario en prácticas" required>
+                            <label for="r2">Persoal funcionario en prácticas</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="r3" name="relacion" value="Persoal funcionario interino" required>
+                            <label for="r3">Persoal funcionario interino</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="r4" name="relacion" value="Persoal laboral indefinido" required>
+                            <label for="r4">Persoal laboral indefinido</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="r5" name="relacion" value="Persoal laboral temporal" required>
+                            <label for="r5">Persoal laboral temporal</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Xornada *</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="x1" name="xornada" value="Completa" required>
+                            <label for="x1">Completa</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="x2" name="xornada" value="Parcial" required>
+                            <label for="x2">Parcial</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN 2: PERMISOS -->
+            <div class="form-section">
+                <h2>2. Permisos que Solicita</h2>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="countPermisos">0</div>
+                        <div class="stat-label">Permisos</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <div class="stat-number" id="countDocs">0</div>
+                        <div class="stat-label">Documentos</div>
+                    </div>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="dias">Días solicitados</label>
+                        <input type="text" id="dias">
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data</label>
+                        <input type="date" id="data">
+                    </div>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="horaDesde">Horas - De</label>
+                        <input type="time" id="horaDesde">
+                    </div>
+                    <div class="form-group">
+                        <label for="horaAta">Horas - A</label>
+                        <input type="time" id="horaAta">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipos de permisos</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="p1" name="permisos" value="Falecemento, accidente ou enfermidade grave (art 3)" onchange="updateCounts()">
+                            <label for="p1">Falecemento, accidente ou enfermidade grave (art 3)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="p2" name="permisos" value="Traslado de domicilio (art. 4)" onchange="updateCounts()">
+                            <label for="p2">Traslado de domicilio (art. 4)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="p3" name="permisos" value="Concorrer a exames finais (art. 6)" onchange="updateCounts()">
+                            <label for="p3">Concorrer a exames finais (art. 6)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="p4" name="permisos" value="Exames prenatais (art. 9)" onchange="updateCounts()">
+                            <label for="p4">Exames prenatais (art. 9)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="p5" name="permisos" value="Fecundación asistida (art. 10)" onchange="updateCounts()">
+                            <label for="p5">Fecundación asistida (art. 10)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="p6" name="permisos" value="Matrimonio de familiares (art.12)" onchange="updateCounts()">
+                            <label for="p6">Matrimonio de familiares (art.12)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="p7" name="permisos" value="Deberes inescusables (art. 14)" onchange="updateCounts()">
+                            <label for="p7">Deberes inescusables (art. 14)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="p8" name="permisos" value="Asuntos particulares (art. 15)" onchange="updateCounts()">
+                            <label for="p8">Asuntos particulares (art. 15)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="p9" name="permisos" value="Imprevistos (art. 33)" onchange="updateCounts()">
+                            <label for="p9">Imprevistos (art. 33)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN 3: DOCUMENTACIÓN -->
+            <div class="form-section">
+                <h2>3. Documentación que se achega</h2>
+                
+                <div class="form-group">
+                    <label>Selecciona a documentación</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d1" name="docs" value="Fotocopia do libro de familia" onchange="updateCounts(); updateDocList()">
+                            <label for="d1">Fotocopia do libro de familia</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d2" name="docs" value="Certificado de empadroamento" onchange="updateCounts(); updateDocList()">
+                            <label for="d2">Certificado de empadroamento</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d3" name="docs" value="Certificado de defunción" onchange="updateCounts(); updateDocList()">
+                            <label for="d3">Certificado de defunción</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d4" name="docs" value="Inscrición Rexistro Parellas de Feito" onchange="updateCounts(); updateDocList()">
+                            <label for="d4">Inscrición Rexistro Parellas de Feito</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d5" name="docs" value="Documento hospitalización ou intervención" onchange="updateCounts(); updateDocList()">
+                            <label for="d5">Documento hospitalización ou intervención</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d6" name="docs" value="Partida de nacemento ou adopción" onchange="updateCounts(); updateDocList()">
+                            <label for="d6">Partida de nacemento ou adopción</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d7" name="docs" value="Certificado de convivencia ou informe social" onchange="updateCounts(); updateDocList()">
+                            <label for="d7">Certificado de convivencia ou informe social</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d8" name="docs" value="Documento asistencia a proba ou exame" onchange="updateCounts(); updateDocList()">
+                            <label for="d8">Documento asistencia a proba ou exame</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d9" name="docs" value="Documento exames prenatais" onchange="updateCounts(); updateDocList()">
+                            <label for="d9">Documento exames prenatais</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d10" name="docs" value="Documento sesións información" onchange="updateCounts(); updateDocList()">
+                            <label for="d10">Documento sesións información</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d11" name="docs" value="Documento fecundación asistida" onchange="updateCounts(); updateDocList()">
+                            <label for="d11">Documento fecundación asistida</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d12" name="docs" value="Documento revisións médicas" onchange="updateCounts(); updateDocList()">
+                            <label for="d12">Documento revisións médicas</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d13" name="docs" value="Documento limitacións (acompañamento)" onchange="updateCounts(); updateDocList()">
+                            <label for="d13">Documento limitacións (acompañamento)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d14" name="docs" value="Citación órgano xudicial" onchange="updateCounts(); updateDocList()">
+                            <label for="d14">Citación órgano xudicial</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d15" name="docs" value="Documento elector ou mesa electoral" onchange="updateCounts(); updateDocList()">
+                            <label for="d15">Documento elector ou mesa electoral</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d16" name="docs" value="Convocatoria ou asistencia comisións" onchange="updateCounts(); updateDocList()">
+                            <label for="d16">Convocatoria ou asistencia comisións</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d17" name="docs" value="Visitas en programas europeos" onchange="updateCounts(); updateDocList()">
+                            <label for="d17">Visitas en programas europeos</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d18" name="docs" value="Responsabilidade civil/penal/social" onchange="updateCounts(); updateDocList()">
+                            <label for="d18">Responsabilidade civil/penal/social</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d19" name="docs" value="Doazón sangue/medula/plaquetas" onchange="updateCounts(); updateDocList()">
+                            <label for="d19">Doazón sangue/medula/plaquetas</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d20" name="docs" value="Asistencia competicións deportistas internacionais" onchange="updateCounts(); updateDocList()">
+                            <label for="d20">Asistencia competicións deportistas internacionais</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="docList" class="documento-list empty">
+                    <h3>📄 Documentos anexados</h3>
+                    <p style="font-size: 0.875rem; color: #6b7280;">Selecciona documentación acima para vela aquí</p>
+                </div>
+            </div>
+            
+            <!-- BOTÓNS DE ACCIÓN -->
+            <div class="form-section">
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="limpiarFormulario()">Limpar</button>
+                    <button type="button" class="btn-success" onclick="descargarPDF()">📥 PDF</button>
+                    <button type="submit" class="btn-primary">💾 Gardar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <div class="footer">
+        <p>🌐 App funciona offline | 💾 Datos almacenados localmente</p>
+    </div>
+
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+
+        // Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').classList.remove('hidden');
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => {
+                    deferredPrompt = null;
+                    document.getElementById('installBanner').classList.add('hidden');
+                });
+            }
+        }
+
+        function closeInstallBanner() {
+            document.getElementById('installBanner').classList.add('hidden');
+        }
+
+        // Form management
+        const form = document.getElementById('formulario');
+
+        function updateCounts() {
+            const permisos = document.querySelectorAll('input[name="permisos"]:checked').length;
+            const docs = document.querySelectorAll('input[name="docs"]:checked').length;
+            document.getElementById('countPermisos').textContent = permisos;
+            document.getElementById('countDocs').textContent = docs;
+        }
+
+        function updateDocList() {
+            const selectedDocs = Array.from(document.querySelectorAll('input[name="docs"]:checked')).map(e => e.value);
+            const docList = document.getElementById('docList');
+            
+            if (selectedDocs.length === 0) {
+                docList.classList.add('empty');
+                docList.innerHTML = '<h3>📄 Documentos anexados</h3><p style="font-size: 0.875rem; color: #6b7280;">Selecciona documentación acima para vela aquí</p>';
+            } else {
+                docList.classList.remove('empty');
+                let html = `<h3>📄 Documentos anexados (${selectedDocs.length})</h3><ol>`;
+                selectedDocs.forEach(doc => {
+                    html += `<li>${doc}</li>`;
+                });
+                html += '</ol>';
+                docList.innerHTML = html;
+            }
+        }
+
+        function guardarFormulario() {
+            const formData = new FormData(form);
+            const data = {
+                timestamp: new Date().toISOString(),
+                datos: {}
+            };
+
+            // Recopilar datos
+            document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="time"], input[type="date"]').forEach(el => {
+                if (el.id) data.datos[el.id] = el.value;
+            });
+
+            data.datos.relacion = document.querySelector('input[name="relacion"]:checked')?.value || '';
+            data.datos.xornada = document.querySelector('input[name="xornada"]:checked')?.value || '';
+            data.datos.permisos = Array.from(document.querySelectorAll('input[name="permisos"]:checked')).map(e => e.value);
+            data.datos.documentos = Array.from(document.querySelectorAll('input[name="docs"]:checked')).map(e => e.value);
+
+            localStorage.setItem('solicitude_' + Date.now(), JSON.stringify(data));
+            
+            showSuccess();
+            limpiarFormulario();
+        }
+
+        function limpiarFormulario() {
+            form.reset();
+            updateCounts();
+            updateDocList();
+        }
+
+        function showSuccess() {
+            const msg = document.getElementById('successMessage');
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 3000);
+        }
+
+        function descargarPDF() {
+            const apellidos = document.getElementById('apellidos').value;
+            const nombre = document.getElementById('nombre').value;
+            const nif = document.getElementById('nif').value;
+            
+            if (!apellidos || !nombre || !nif) {
+                alert('Completa os datos obrigatorios: Apelidos, Nome e NIF');
+                return;
+            }
+
+            // Crear contenido PDF como texto
+            let contenido = `ANEXO V - SOLICITUDE DE PERMISOS E LICENZAS\n`;
+            contenido += `=====================================\n\n`;
+            contenido += `DATOS DO SOLICITANTE\n`;
+            contenido += `Apelidos: ${document.getElementById('apellidos').value}\n`;
+            contenido += `Nome: ${document.getElementById('nombre').value}\n`;
+            contenido += `NIF: ${document.getElementById('nif').value}\n`;
+            contenido += `Teléfono: ${document.getElementById('telefono').value}\n`;
+            contenido += `Correo: ${document.getElementById('correo').value}\n`;
+            contenido += `Corpo: ${document.getElementById('corpo').value}\n`;
+            contenido += `Grupo: ${document.getElementById('grupo').value}\n`;
+            contenido += `Subgrupo: ${document.getElementById('subgrupo').value}\n`;
+            contenido += `Centro de destino: ${document.getElementById('centro').value}\n`;
+            contenido += `Relación xurídica: ${document.querySelector('input[name="relacion"]:checked')?.value || '-'}\n`;
+            contenido += `Xornada: ${document.querySelector('input[name="xornada"]:checked')?.value || '-'}\n\n`;
+
+            contenido += `PERMISOS SOLICITADOS\n`;
+            contenido += `Días: ${document.getElementById('dias').value}\n`;
+            contenido += `Data: ${document.getElementById('data').value}\n`;
+            contenido += `Horas: ${document.getElementById('horaDesde').value} - ${document.getElementById('horaAta').value}\n`;
+            const permisos = Array.from(document.querySelectorAll('input[name="permisos"]:checked')).map(e => '- ' + e.value);
+            contenido += permisos.length > 0 ? permisos.join('\n') : '- Ningún permiso seleccionado';
+            contenido += '\n\n';
+
+            contenido += `DOCUMENTACIÓN ANEXADA\n`;
+            const docs = Array.from(document.querySelectorAll('input[name="docs"]:checked')).map(e => '- ' + e.value);
+            contenido += docs.length > 0 ? docs.join('\n') : '- Ningunha documentación';
+            contenido += '\n\n';
+            contenido += `Data: __________________\n`;
+            contenido += `Sinatura: _____________________________\n`;
+            contenido += `Director/a do centro: _____________________________\n`;
+
+            // Descargar como TXT
+            const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `solicitude_permisos_${apellidos}_${nombre}.txt`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            guardarFormulario();
+        });
+
+        // Cargar datos gardados ao abrir
+        window.addEventListener('load', () => {
+            const datosGardados = localStorage.getItem('solicitude_actual');
+            if (datosGardados) {
+                try {
+                    const data = JSON.parse(datosGardados);
+                    Object.keys(data).forEach(key => {
+                        const input = document.getElementById(key);
+                        if (input) input.value = data[key];
+                    });
+                } catch (e) {}
+            }
+        });
+
+        // Gardar borrador automaticamente
+        form.addEventListener('change', () => {
+            const formData = new FormData(form);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            localStorage.setItem('solicitude_actual', JSON.stringify(data));
+        });
+    </script>
+</body>
+</html>
