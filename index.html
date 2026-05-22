@@ -372,10 +372,10 @@
     
     <div class="container">
         <div class="success-message" id="successMessage">
-            ✅ Solicitude gardada correctamente!
+            ✅ Solicitude enviada correctamente!
         </div>
         
-        <form action="https://formspree.io/f/mqejbywv" method="POST" enctype="multipart/form-data">
+        <form id="formulario">
             <!-- SECCIÓN 1: DATOS DO SOLICITANTE -->
             <div class="form-section">
                 <h2>1. Datos do Solicitante</h2>
@@ -509,32 +509,32 @@
                     <label>Tipos de permisos</label>
                     <div class="checkbox-group">
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p1" name="permisos" value="Falecemento, accidente ou enfermidade grave (art 3)" onchange="updateCounts()">
-                            <label for="p1">Falecemento, accidente ou enfermidade grave (art 3)</label>
+                            <input type="checkbox" id="p1" name="permisos" value="Falecemento, accidente ou enfermidade grave, hospitalización ou intervención cirúrxica dun familiar (art 3)" onchange="updateCounts()">
+                            <label for="p1">Falecemento, accidente ou enfermidade grave, hospitalización ou intervención cirúrxica dun familiar (art 3)</label>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" id="p2" name="permisos" value="Traslado de domicilio (art. 4)" onchange="updateCounts()">
                             <label for="p2">Traslado de domicilio (art. 4)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p3" name="permisos" value="Concorrer a exames finais (art. 6)" onchange="updateCounts()">
-                            <label for="p3">Concorrer a exames finais (art. 6)</label>
+                            <input type="checkbox" id="p3" name="permisos" value="Concorrer a exames finais, probas definitivas de aptitude e probas selectivas no ámbito do emprego público (art. 6)" onchange="updateCounts()">
+                            <label for="p3">Concorrer a exames finais, probas definitivas de aptitude e probas selectivas no ámbito do emprego público (art. 6)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p4" name="permisos" value="Exames prenatais (art. 9)" onchange="updateCounts()">
-                            <label for="p4">Exames prenatais (art. 9)</label>
+                            <input type="checkbox" id="p4" name="permisos" value="Realización de exames prenatais e técnicas de preparación ao parto ou asistencia ás preceptivas sesións de información e preparación e para a realización dos preceptivos informes psicolóxicos e sociais previos á declaración de idoneidade (art. 9)" onchange="updateCounts()">
+                            <label for="p4">Realización de exames prenatais e técnicas de preparación ao parto ou asistencia ás preceptivas sesións de información e preparación (art. 9)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p5" name="permisos" value="Fecundación asistida (art. 10)" onchange="updateCounts()">
-                            <label for="p5">Fecundación asistida (art. 10)</label>
+                            <input type="checkbox" id="p5" name="permisos" value="Para realizar tratamentos de fecundación asistida (art. 10)" onchange="updateCounts()">
+                            <label for="p5">Para realizar tratamentos de fecundación asistida (art. 10)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p6" name="permisos" value="Matrimonio de familiares (art.12)" onchange="updateCounts()">
-                            <label for="p6">Matrimonio de familiares (art.12)</label>
+                            <input type="checkbox" id="p6" name="permisos" value="Por matrimonio de familiares de ata segundo grao de consanguinidade e primeiro de afinidade (art.12)" onchange="updateCounts()">
+                            <label for="p6">Por matrimonio de familiares de ata segundo grao de consanguinidade e primeiro de afinidade (art.12)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p7" name="permisos" value="Deberes inescusables (art. 14)" onchange="updateCounts()">
-                            <label for="p7">Deberes inescusables (art. 14)</label>
+                            <input type="checkbox" id="p7" name="permisos" value="Deberes inescusables de carácter público ou persoal, deberes relacionados coa conciliación da vida familiar e laboral e mais de asistencia a consultas e revisións médicas (art. 14)" onchange="updateCounts()">
+                            <label for="p7">Deberes inescusables de carácter público ou persoal, deberes relacionados coa conciliación da vida familiar e laboral e revisións médicas (art. 14)</label>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" id="p8" name="permisos" value="Asuntos particulares (art. 15)" onchange="updateCounts()">
@@ -556,8 +556,8 @@
                     <label>Selecciona a documentación</label>
                     <div class="checkbox-group">
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d1" name="docs" value="Fotocopia do libro de familia" onchange="updateCounts(); updateDocList()">
-                            <label for="d1">Fotocopia do libro de familia</label>
+                            <input type="checkbox" id="d1" name="docs" value="Fotocopia cotexada do libro de familia" onchange="updateCounts(); updateDocList()">
+                            <label for="d1">Fotocopia cotexada do libro de familia</label>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" id="d2" name="docs" value="Certificado de empadroamento" onchange="updateCounts(); updateDocList()">
@@ -568,72 +568,76 @@
                             <label for="d3">Certificado de defunción</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d4" name="docs" value="Inscrición Rexistro Parellas de Feito" onchange="updateCounts(); updateDocList()">
-                            <label for="d4">Inscrición Rexistro Parellas de Feito</label>
+                            <input type="checkbox" id="d4" name="docs" value="Fotocopia cotexada da inscrición no Rexistro Oficial de Parellas de Feito" onchange="updateCounts(); updateDocList()">
+                            <label for="d4">Fotocopia cotexada da inscrición no Rexistro Oficial de Parellas de Feito</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d5" name="docs" value="Documento hospitalización ou intervención" onchange="updateCounts(); updateDocList()">
-                            <label for="d5">Documento hospitalización ou intervención</label>
+                            <input type="checkbox" id="d5" name="docs" value="Documento que acredite a hospitalización ou a intervención cirúrxica grave segundo o motivo que xera a solicitude do permiso" onchange="updateCounts(); updateDocList()">
+                            <label for="d5">Documento que acredite a hospitalización ou a intervención cirúrxica grave</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d6" name="docs" value="Partida de nacemento ou adopción" onchange="updateCounts(); updateDocList()">
-                            <label for="d6">Partida de nacemento ou adopción</label>
+                            <input type="checkbox" id="d6" name="docs" value="Fotocopia cotexada da partida de nacemento ou da resolución administrativa ou xudicial de adopción ou acollemento" onchange="updateCounts(); updateDocList()">
+                            <label for="d6">Fotocopia partida de nacemento ou adopción/acollemento</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d7" name="docs" value="Certificado de convivencia ou informe social" onchange="updateCounts(); updateDocList()">
-                            <label for="d7">Certificado de convivencia ou informe social</label>
+                            <input type="checkbox" id="d7" name="docs" value="Certificado de convivencia ou informe do traballador social en que acredite as persoas que conforman a unidade familiar" onchange="updateCounts(); updateDocList()">
+                            <label for="d7">Certificado de convivencia ou informe social da unidade familiar</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d8" name="docs" value="Documento asistencia a proba ou exame" onchange="updateCounts(); updateDocList()">
-                            <label for="d8">Documento asistencia a proba ou exame</label>
+                            <input type="checkbox" id="d8" name="docs" value="Documento acreditativo da asistencia á proba de aptitude, exame final ou proba de acceso ou ingreso á función pública en que figure o lugar, a data e o centro de realización" onchange="updateCounts(); updateDocList()">
+                            <label for="d8">Documento acreditativo da asistencia á proba, exame ou acceso á función pública</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d9" name="docs" value="Documento exames prenatais" onchange="updateCounts(); updateDocList()">
-                            <label for="d9">Documento exames prenatais</label>
+                            <input type="checkbox" id="d9" name="docs" value="Documento xustificativo da necesidade de realización de exames prenatais e técnicas de preparación ao parto dentro da xornada laboral" onchange="updateCounts(); updateDocList()">
+                            <label for="d9">Documento necesidade exames prenatais e técnicas de preparación ao parto</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d10" name="docs" value="Documento sesións información" onchange="updateCounts(); updateDocList()">
-                            <label for="d10">Documento sesións información</label>
+                            <input type="checkbox" id="d10" name="docs" value="Documento xustificativo da necesidade de asistencia ás preceptivas sesións de información e preparación e para a realización dos preceptivos informes psicolóxicos e sociais previos á declaración de idoneidade dentro da xornada laboral" onchange="updateCounts(); updateDocList()">
+                            <label for="d10">Documento sesións información, preparación e informes psicolóxicos/sociais</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d11" name="docs" value="Documento fecundación asistida" onchange="updateCounts(); updateDocList()">
-                            <label for="d11">Documento fecundación asistida</label>
+                            <input type="checkbox" id="d11" name="docs" value="Documento xustificativo da necesidade de realización de tratamentos de fecundación asistida dentro da xornada laboral" onchange="updateCounts(); updateDocList()">
+                            <label for="d11">Documento necesidade realización tratamentos fecundación asistida</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d12" name="docs" value="Documento revisións médicas" onchange="updateCounts(); updateDocList()">
-                            <label for="d12">Documento revisións médicas</label>
+                            <input type="checkbox" id="d12" name="docs" value="Documento xustificativo da necesidade de realización das revisións médicas dentro da xornada laboral" onchange="updateCounts(); updateDocList()">
+                            <label for="d12">Documento necesidade realización revisións médicas dentro da xornada laboral</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d13" name="docs" value="Documento limitacións (acompañamento)" onchange="updateCounts(); updateDocList()">
-                            <label for="d13">Documento limitacións (acompañamento)</label>
+                            <input type="checkbox" id="d13" name="docs" value="Documento acreditativo das limitacións que lles impiden ir sós ou de que non poden valerse por si mesmos (acompañamento ás revisións médicas)" onchange="updateCounts(); updateDocList()">
+                            <label for="d13">Documento limitacións para acompañamento ás revisións médicas</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d14" name="docs" value="Citación órgano xudicial" onchange="updateCounts(); updateDocList()">
-                            <label for="d14">Citación órgano xudicial</label>
+                            <input type="checkbox" id="d14" name="docs" value="Orixinal ou copia cotexada da citación ou convocatoria do órgano xudicial, administrativo, órgano de goberno ou comisión dependente deles ou calquera outro órgano oficial" onchange="updateCounts(); updateDocList()">
+                            <label for="d14">Orixinal ou copia cotexada da citación ou convocatoria do órgano xudicial/administrativo</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d15" name="docs" value="Documento elector ou mesa electoral" onchange="updateCounts(); updateDocList()">
-                            <label for="d15">Documento elector ou mesa electoral</label>
+                            <input type="checkbox" id="d15" name="docs" value="Documento acreditativo de ter a condición de elixible no proceso electoral ou de formar parte dunha mesa electoral" onchange="updateCounts(); updateDocList()">
+                            <label for="d15">Documento elixible proceso electoral ou integrante mesa electoral</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d16" name="docs" value="Convocatoria ou asistencia comisións" onchange="updateCounts(); updateDocList()">
-                            <label for="d16">Convocatoria ou asistencia comisións</label>
+                            <input type="checkbox" id="d16" name="docs" value="Orixinal ou copia cotexada da convocatoria ou/e asistencia a reunión das comisións das probas de acceso á universidade, da Consellería de Educación e O.U ou das súas xefaturas territoriais ou do órgano de selección ou provisión, con nomeamiento da autoridade competente" onchange="updateCounts(); updateDocList()">
+                            <label for="d16">Orixinal/copia cotexada convocatoria/asistencia comisións acceso universidade/Consellería</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d17" name="docs" value="Visitas en programas europeos" onchange="updateCounts(); updateDocList()">
-                            <label for="d17">Visitas en programas europeos</label>
+                            <input type="checkbox" id="d17" name="docs" value="Orixinal ou copia cotexada da realización de visitas dentro dos programas europeos" onchange="updateCounts(); updateDocList()">
+                            <label for="d17">Orixinal ou copia cotexada da realización de visitas dentro dos programas europeos</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d18" name="docs" value="Responsabilidade civil/penal/social" onchange="updateCounts(); updateDocList()">
-                            <label for="d18">Responsabilidade civil/penal/social</label>
+                            <input type="checkbox" id="d18" name="docs" value="Documento que acredite a responsabilidade civil, penal, social ou administrativa da persoa interesada e que supoña o cumprimento dunha obriga" onchange="updateCounts(); updateDocList()">
+                            <label for="d18">Documento responsabilidade civil/penal/social/administrativa e cumprimento de obriga</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d19" name="docs" value="Doazón sangue/medula/plaquetas" onchange="updateCounts(); updateDocList()">
-                            <label for="d19">Doazón sangue/medula/plaquetas</label>
+                            <input type="checkbox" id="d19" name="docs" value="Documento que acredite a doazón de sangue, medula ou plaquetas" onchange="updateCounts(); updateDocList()">
+                            <label for="d19">Documento que acredite a doazón de sangue, medula ou plaquetas</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d20" name="docs" value="Asistencia competicións deportistas internacionais" onchange="updateCounts(); updateDocList()">
-                            <label for="d20">Asistencia competicións deportistas internacionais</label>
+                            <input type="checkbox" id="d20" name="docs" value="Documento que acredite a asistencia dos deportistas de alto nivel ás competicións de carácter internacional, así como as concentracións preparatorias destas" onchange="updateCounts(); updateDocList()">
+                            <label for="d20">Documento asistencia deportistas alto nivel competicións internacionais</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="d21" name="docs" value="Outros documentos" onchange="updateCounts(); updateDocList()">
+                            <label for="d21">Outros documentos</label>
                         </div>
                     </div>
                 </div>
@@ -649,7 +653,7 @@
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="limpiarFormulario()">Limpar</button>
                     <button type="button" class="btn-success" onclick="descargarPDF()">📥 PDF</button>
-                    <button type="submit" class="btn-primary">💾 Enviar</button>
+                    <button type="submit" class="btn-primary">📤 Enviar</button>
                 </div>
             </div>
         </form>
@@ -802,7 +806,10 @@
             URL.revokeObjectURL(url);
         }
 
-       
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            guardarFormulario();
+        });
 
         // Cargar datos gardados ao abrir
         window.addEventListener('load', () => {
