@@ -5,15 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Aplicación para solicitar permisos e licenzas - ANEXO V">
     <meta name="theme-color" content="#1f2937">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Permisos">
     
     <title>ANEXO V - Solicitude de Permisos</title>
     
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231f2937' width='192' height='192'/><text x='50%' y='50%' font-size='100' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central'>A</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231f2937' width='180' height='180'/><text x='50%' y='50%' font-size='90' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central'>A</text></svg>">
+    <!-- Biblioteca para crear PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         * {
@@ -53,38 +49,6 @@
         .app-header p {
             font-size: 0.875rem;
             opacity: 0.9;
-        }
-        
-        .install-banner {
-            background: #dbeafe;
-            border: 1px solid #93c5fd;
-            color: #1e40af;
-            padding: 0.75rem 1rem;
-            margin: 0.5rem;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.875rem;
-        }
-        
-        .install-banner.hidden {
-            display: none;
-        }
-        
-        .install-banner button {
-            background: #1e40af;
-            color: white;
-            border: none;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.875rem;
-        }
-        
-        .install-banner button:active {
-            transform: scale(0.98);
         }
         
         .container {
@@ -128,8 +92,6 @@
         input[type="text"],
         input[type="email"],
         input[type="tel"],
-        input[type="time"],
-        input[type="date"],
         textarea,
         select {
             width: 100%;
@@ -144,8 +106,6 @@
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="tel"]:focus,
-        input[type="time"]:focus,
-        input[type="date"]:focus,
         textarea:focus,
         select:focus {
             outline: none;
@@ -208,8 +168,7 @@
             display: flex;
             gap: 0.75rem;
             margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e5e7eb;
+            flex-wrap: wrap;
         }
         
         button {
@@ -221,6 +180,7 @@
             cursor: pointer;
             transition: all 0.2s;
             flex: 1;
+            min-width: 140px;
         }
         
         .btn-primary {
@@ -228,14 +188,24 @@
             color: white;
         }
         
-        .btn-primary:active {
+        .btn-primary:hover:not(:disabled) {
             background: #2563eb;
+        }
+        
+        .btn-primary:active {
             transform: scale(0.98);
+        }
+        
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
         
         .btn-secondary {
             background: #e5e7eb;
             color: #1f2937;
+            flex: 1;
         }
         
         .btn-secondary:active {
@@ -245,10 +215,15 @@
         .btn-success {
             background: #10b981;
             color: white;
+            flex: 1;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
         }
         
         .btn-success:active {
-            background: #059669;
+            background: #047857;
         }
         
         .documento-list {
@@ -282,19 +257,44 @@
             color: #6b7280;
         }
         
-        .success-message {
-            background: #d1fae5;
-            border: 1px solid #6ee7b7;
-            color: #065f46;
+        .documento-list.required {
+            background: #fef3c7;
+            border-color: #fcd34d;
+            color: #92400e;
+        }
+        
+        .success-message,
+        .error-message,
+        .warning-message {
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             display: none;
+            animation: slideIn 0.3s ease-out;
         }
         
-        .success-message.show {
+        .success-message {
+            background: #d1fae5;
+            border: 1px solid #6ee7b7;
+            color: #065f46;
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+        
+        .warning-message {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+        }
+        
+        .success-message.show,
+        .error-message.show,
+        .warning-message.show {
             display: block;
-            animation: slideIn 0.3s ease-out;
         }
         
         @keyframes slideIn {
@@ -308,32 +308,31 @@
             }
         }
         
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            padding: 0.75rem;
-            border-radius: 8px;
+        .footer {
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 0.75rem 1rem;
             text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .stat-label {
             font-size: 0.75rem;
-            opacity: 0.9;
-            margin-top: 0.25rem;
+            color: #9ca3af;
         }
         
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 480px) {
             .grid-3 {
                 grid-template-columns: 1fr 1fr;
@@ -343,18 +342,9 @@
                 flex-direction: column;
             }
             
-            .app-header h1 {
-                font-size: 1.125rem;
+            button {
+                min-width: unset;
             }
-        }
-        
-        .footer {
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            padding: 0.75rem 1rem;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #9ca3af;
         }
     </style>
 </head>
@@ -364,17 +354,28 @@
         <p>Solicitude de Permisos e Licenzas</p>
     </div>
     
-    <div class="install-banner hidden" id="installBanner">
-        <span>Instala esta app no teu teléfono</span>
-        <button onclick="installApp()">Instalar</button>
-        <button onclick="closeInstallBanner()" style="background: transparent; color: #1e40af; padding: 0;">✕</button>
-    </div>
-    
     <div class="container">
         <div class="success-message" id="successMessage">
-            ✅ Solicitude enviada correctamente!
+            ✅ Solicitude enviada correctamente! Recibirá confirmación en spatinoperez@edu.xunta.gal
         </div>
         
+        <div class="error-message" id="errorMessage">
+            ❌ Erro ao enviar a solicitude. Por favor, intente novamente.
+        </div>
+        
+        <div class="warning-message" id="warningMessage">
+            ⚠️ Falta seleccionar documentación obrigatoria para este tipo de permiso.
+        </div>
+        
+        <!-- FORMULARIO OCULTO PARA ENVÍO -->
+        <form id="formEnvio" action="https://formspree.io/f/xyzpnwqy" method="POST" style="display: none;">
+            <input type="hidden" name="mensaje" id="mensajeOculto">
+            <input type="hidden" name="_subject" value="Solicitude de Permisos - ANEXO V">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="about:blank">
+        </form>
+        
+        <!-- FORMULARIO VISIBLE -->
         <form id="formulario">
             <!-- SECCIÓN 1: DATOS DO SOLICITANTE -->
             <div class="form-section">
@@ -403,8 +404,8 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="correo">Correo</label>
-                    <input type="email" id="correo">
+                    <label for="correo">Correo electrónico do profesorado *</label>
+                    <input type="email" id="correo" required placeholder="seu.correo@edu.xunta.gal">
                 </div>
                 
                 <div class="grid-3">
@@ -472,17 +473,6 @@
             <div class="form-section">
                 <h2>2. Permisos que Solicita</h2>
                 
-                <div class="stats">
-                    <div class="stat-card">
-                        <div class="stat-number" id="countPermisos">0</div>
-                        <div class="stat-label">Permisos</div>
-                    </div>
-                    <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                        <div class="stat-number" id="countDocs">0</div>
-                        <div class="stat-label">Documentos</div>
-                    </div>
-                </div>
-                
                 <div class="grid-2">
                     <div class="form-group">
                         <label for="dias">Días solicitados</label>
@@ -497,11 +487,40 @@
                 <div class="grid-2">
                     <div class="form-group">
                         <label for="horaDesde">Horas - De</label>
-                        <input type="time" id="horaDesde">
+                        <select id="horaDesde">
+                            <option value="">-- Selecciona hora --</option>
+                            <option value="08:30">08:30</option>
+                            <option value="09:00">09:00</option>
+                            <option value="09:50">09:50</option>
+                            <option value="10:40">10:40</option>
+                            <option value="11:00">11:00</option>
+                            <option value="11:50">11:50</option>
+                            <option value="12:40">12:40</option>
+                            <option value="13:00">13:00</option>
+                            <option value="13:50">13:50</option>
+                            <option value="14:40">14:40</option>
+                            <option value="16:50">16:50</option>
+                            <option value="17:40">17:40</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="horaAta">Horas - A</label>
-                        <input type="time" id="horaAta">
+                        <select id="horaAta">
+                            <option value="">-- Selecciona hora --</option>
+                            <option value="08:30">08:30</option>
+                            <option value="09:00">09:00</option>
+                            <option value="09:50">09:50</option>
+                            <option value="10:40">10:40</option>
+                            <option value="11:00">11:00</option>
+                            <option value="11:50">11:50</option>
+                            <option value="12:40">12:40</option>
+                            <option value="13:00">13:00</option>
+                            <option value="13:50">13:50</option>
+                            <option value="14:40">14:40</option>
+                            <option value="16:50">16:50</option>
+                            <option value="17:40">17:40</option>
+                            <option value="18:30">18:30</option>
+                        </select>
                     </div>
                 </div>
                 
@@ -509,39 +528,39 @@
                     <label>Tipos de permisos</label>
                     <div class="checkbox-group">
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p1" name="permisos" value="Falecemento, accidente ou enfermidade grave, hospitalización ou intervención cirúrxica dun familiar (art 3)" onchange="updateCounts()">
+                            <input type="checkbox" id="p1" name="permisos" value="Falecemento, accidente ou enfermidade grave, hospitalización ou intervención cirúrxica dun familiar (art 3)" data-docs="d1,d2,d3,d5,d6" onchange="updateCounts(); actualizarDocumentosAutomaticos()">
                             <label for="p1">Falecemento, accidente ou enfermidade grave, hospitalización ou intervención cirúrxica dun familiar (art 3)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p2" name="permisos" value="Traslado de domicilio (art. 4)" onchange="updateCounts()">
+                            <input type="checkbox" id="p2" name="permisos" value="Traslado de domicilio (art. 4)" data-docs="d2" onchange="updateCounts(); actualizarDocumentosAutomaticos()">
                             <label for="p2">Traslado de domicilio (art. 4)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p3" name="permisos" value="Concorrer a exames finais, probas definitivas de aptitude e probas selectivas no ámbito do emprego público (art. 6)" onchange="updateCounts()">
+                            <input type="checkbox" id="p3" name="permisos" value="Concorrer a exames finais, probas definitivas de aptitude e probas selectivas no ámbito do emprego público (art. 6)" data-docs="d8,d16" onchange="updateCounts(); actualizarDocumentosAutomaticos()">
                             <label for="p3">Concorrer a exames finais, probas definitivas de aptitude e probas selectivas no ámbito do emprego público (art. 6)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p4" name="permisos" value="Realización de exames prenatais e técnicas de preparación ao parto ou asistencia ás preceptivas sesións de información e preparación e para a realización dos preceptivos informes psicolóxicos e sociais previos á declaración de idoneidade (art. 9)" onchange="updateCounts()">
-                            <label for="p4">Realización de exames prenatais e técnicas de preparación ao parto ou asistencia ás preceptivas sesións de información e preparación (art. 9)</label>
+                            <input type="checkbox" id="p4" name="permisos" value="Realización de exames prenatais e técnicas de preparación ao parto ou asistencia ás preceptivas sesións de información e preparación e para a realización dos preceptivos informes psicolóxicos e sociais previos á declaración de idoneidade (art. 9)" data-docs="d9,d10" onchange="updateCounts(); actualizarDocumentosAutomaticos()">
+                            <label for="p4">Realización de exames prenatais e técnicas de preparación ao parto ou asistencia ás preceptivas sesións de información (art. 9)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p5" name="permisos" value="Para realizar tratamentos de fecundación asistida (art. 10)" onchange="updateCounts()">
+                            <input type="checkbox" id="p5" name="permisos" value="Para realizar tratamentos de fecundación asistida (art. 10)" data-docs="d11" onchange="updateCounts(); actualizarDocumentosAutomaticos()">
                             <label for="p5">Para realizar tratamentos de fecundación asistida (art. 10)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p6" name="permisos" value="Por matrimonio de familiares de ata segundo grao de consanguinidade e primeiro de afinidade (art.12)" onchange="updateCounts()">
+                            <input type="checkbox" id="p6" name="permisos" value="Por matrimonio de familiares de ata segundo grao de consanguinidade e primeiro de afinidade (art.12)" data-docs="d1" onchange="updateCounts(); actualizarDocumentosAutomaticos()">
                             <label for="p6">Por matrimonio de familiares de ata segundo grao de consanguinidade e primeiro de afinidade (art.12)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p7" name="permisos" value="Deberes inescusables de carácter público ou persoal, deberes relacionados coa conciliación da vida familiar e laboral e mais de asistencia a consultas e revisións médicas (art. 14)" onchange="updateCounts()">
-                            <label for="p7">Deberes inescusables de carácter público ou persoal, deberes relacionados coa conciliación da vida familiar e laboral e revisións médicas (art. 14)</label>
+                            <input type="checkbox" id="p7" name="permisos" value="Deberes inescusables de carácter público ou persoal, deberes relacionados coa conciliación da vida familiar e laboral e mais de asistencia a consultas e revisións médicas (art. 14)" data-docs="d12,d13,d14,d15" onchange="updateCounts(); actualizarDocumentosAutomaticos()">
+                            <label for="p7">Deberes inescusables de carácter público ou persoal, deberes relacionados coa conciliación da vida familiar e laboral (art. 14)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p8" name="permisos" value="Asuntos particulares (art. 15)" onchange="updateCounts()">
+                            <input type="checkbox" id="p8" name="permisos" value="Asuntos particulares (art. 15)" data-docs="none" onchange="updateCounts(); actualizarDocumentosAutomaticos()">
                             <label for="p8">Asuntos particulares (art. 15)</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p9" name="permisos" value="Imprevistos (art. 33)" onchange="updateCounts()">
+                            <input type="checkbox" id="p9" name="permisos" value="Imprevistos (art. 33)" data-docs="none" onchange="updateCounts(); actualizarDocumentosAutomaticos()">
                             <label for="p9">Imprevistos (art. 33)</label>
                         </div>
                     </div>
@@ -636,8 +655,8 @@
                             <label for="d20">Documento asistencia deportistas alto nivel competicións internacionais</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="d21" name="docs" value="Outros documentos" onchange="updateCounts(); updateDocList()">
-                            <label for="d21">Outros documentos</label>
+                            <input type="checkbox" id="d21" name="docs" value="Otros documentos" onchange="updateCounts(); updateDocList()">
+                            <label for="d21">Otros documentos</label>
                         </div>
                     </div>
                 </div>
@@ -653,63 +672,99 @@
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="limpiarFormulario()">Limpar</button>
                     <button type="button" class="btn-success" onclick="descargarPDF()">📥 PDF</button>
-                    <button type="submit" class="btn-primary">📤 Enviar</button>
+                    <button type="button" class="btn-primary" id="btnEnviar" onclick="enviarFormulario(event)">📤 Enviar</button>
                 </div>
             </div>
         </form>
     </div>
     
     <div class="footer">
-        <p>🌐 App funciona offline | 💾 Datos almacenados localmente</p>
+        <p>📧 A solicitude será enviada a spatinoperez@edu.xunta.gal</p>
     </div>
 
     <script>
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
-        }
-
-        // Install prompt
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installBanner').classList.remove('hidden');
-        });
-
-        function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(() => {
-                    deferredPrompt = null;
-                    document.getElementById('installBanner').classList.add('hidden');
-                });
-            }
-        }
-
-        function closeInstallBanner() {
-            document.getElementById('installBanner').classList.add('hidden');
-        }
-
-        // Form management
+        const permisosDocumentacion = {
+            'p1': ['d1', 'd2', 'd3', 'd5', 'd6'],
+            'p2': ['d2'],
+            'p3': ['d8', 'd16'],
+            'p4': ['d9', 'd10'],
+            'p5': ['d11'],
+            'p6': ['d1'],
+            'p7': ['d12', 'd13', 'd14', 'd15'],
+            'p8': [],
+            'p9': []
+        };
+        
         const form = document.getElementById('formulario');
-
+        const formEnvio = document.getElementById('formEnvio');
+        const CORREO_DESTINO = 'spatinoperez@edu.xunta.gal';
+        
         function updateCounts() {
             const permisos = document.querySelectorAll('input[name="permisos"]:checked').length;
             const docs = document.querySelectorAll('input[name="docs"]:checked').length;
-            document.getElementById('countPermisos').textContent = permisos;
-            document.getElementById('countDocs').textContent = docs;
         }
-
+        
+        function actualizarDocumentosAutomaticos() {
+            const permisosSeleccionados = Array.from(document.querySelectorAll('input[name="permisos"]:checked')).map(el => el.id);
+            const documentosRequeridos = new Set();
+            
+            permisosSeleccionados.forEach(permisoId => {
+                if (permisosDocumentacion[permisoId] && permisosDocumentacion[permisoId].length > 0) {
+                    permisosDocumentacion[permisoId].forEach(docId => documentosRequeridos.add(docId));
+                }
+            });
+            
+            document.querySelectorAll('input[name="docs"]').forEach(checkbox => {
+                const docId = checkbox.id;
+                if (documentosRequeridos.has(docId)) {
+                    checkbox.checked = true;
+                } else {
+                    checkbox.checked = false;
+                }
+            });
+            
+            updateDocList();
+            updateCounts();
+            validarDocumentosObrigatorios();
+        }
+        
+        function validarDocumentosObrigatorios() {
+            const permisosSeleccionados = Array.from(document.querySelectorAll('input[name="permisos"]:checked')).map(el => el.id);
+            const docsSeleccionados = Array.from(document.querySelectorAll('input[name="docs"]:checked')).map(el => el.id);
+            
+            let faltanDocumentos = false;
+            
+            for (const permisoId of permisosSeleccionados) {
+                const docsRequeridos = permisosDocumentacion[permisoId] || [];
+                for (const docRequerido of docsRequeridos) {
+                    if (!docsSeleccionados.includes(docRequerido)) {
+                        faltanDocumentos = true;
+                        break;
+                    }
+                }
+            }
+            
+            const btnEnviar = document.getElementById('btnEnviar');
+            if (faltanDocumentos && permisosSeleccionados.length > 0) {
+                btnEnviar.disabled = true;
+                document.getElementById('warningMessage').classList.add('show');
+            } else {
+                btnEnviar.disabled = false;
+                document.getElementById('warningMessage').classList.remove('show');
+            }
+        }
+        
         function updateDocList() {
             const selectedDocs = Array.from(document.querySelectorAll('input[name="docs"]:checked')).map(e => e.value);
             const docList = document.getElementById('docList');
             
             if (selectedDocs.length === 0) {
                 docList.classList.add('empty');
+                docList.classList.remove('required');
                 docList.innerHTML = '<h3>📄 Documentos anexados</h3><p style="font-size: 0.875rem; color: #6b7280;">Selecciona documentación acima para vela aquí</p>';
             } else {
                 docList.classList.remove('empty');
+                docList.classList.add('required');
                 let html = `<h3>📄 Documentos anexados (${selectedDocs.length})</h3><ol>`;
                 selectedDocs.forEach(doc => {
                     html += `<li>${doc}</li>`;
@@ -718,121 +773,243 @@
                 docList.innerHTML = html;
             }
         }
-
-        function guardarFormulario() {
-            const formData = new FormData(form);
-            const data = {
-                timestamp: new Date().toISOString(),
-                datos: {}
-            };
-
-            // Recopilar datos
-            document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="time"], input[type="date"]').forEach(el => {
-                if (el.id) data.datos[el.id] = el.value;
-            });
-
-            data.datos.relacion = document.querySelector('input[name="relacion"]:checked')?.value || '';
-            data.datos.xornada = document.querySelector('input[name="xornada"]:checked')?.value || '';
-            data.datos.permisos = Array.from(document.querySelectorAll('input[name="permisos"]:checked')).map(e => e.value);
-            data.datos.documentos = Array.from(document.querySelectorAll('input[name="docs"]:checked')).map(e => e.value);
-
-            localStorage.setItem('solicitude_' + Date.now(), JSON.stringify(data));
-            
-            showSuccess();
-            limpiarFormulario();
-        }
-
+        
         function limpiarFormulario() {
             form.reset();
             updateCounts();
             updateDocList();
+            document.getElementById('successMessage').classList.remove('show');
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('warningMessage').classList.remove('show');
         }
-
-        function showSuccess() {
-            const msg = document.getElementById('successMessage');
-            msg.classList.add('show');
-            setTimeout(() => msg.classList.remove('show'), 3000);
-        }
-
+        
         function descargarPDF() {
             const apellidos = document.getElementById('apellidos').value;
             const nombre = document.getElementById('nombre').value;
             const nif = document.getElementById('nif').value;
             
             if (!apellidos || !nombre || !nif) {
-                alert('Completa os datos obrigatorios: Apelidos, Nome e NIF');
+                document.getElementById('errorMessage').textContent = '❌ Completa os datos obrigatorios: Apelidos, Nome e NIF';
+                document.getElementById('errorMessage').classList.add('show');
                 return;
             }
 
-            // Crear contenido PDF como texto
-            let contenido = `ANEXO V - SOLICITUDE DE PERMISOS E LICENZAS\n`;
-            contenido += `=====================================\n\n`;
-            contenido += `DATOS DO SOLICITANTE\n`;
-            contenido += `Apelidos: ${document.getElementById('apellidos').value}\n`;
-            contenido += `Nome: ${document.getElementById('nombre').value}\n`;
-            contenido += `NIF: ${document.getElementById('nif').value}\n`;
-            contenido += `Teléfono: ${document.getElementById('telefono').value}\n`;
-            contenido += `Correo: ${document.getElementById('correo').value}\n`;
-            contenido += `Corpo: ${document.getElementById('corpo').value}\n`;
-            contenido += `Grupo: ${document.getElementById('grupo').value}\n`;
-            contenido += `Subgrupo: ${document.getElementById('subgrupo').value}\n`;
-            contenido += `Centro de destino: ${document.getElementById('centro').value}\n`;
-            contenido += `Relación xurídica: ${document.querySelector('input[name="relacion"]:checked')?.value || '-'}\n`;
-            contenido += `Xornada: ${document.querySelector('input[name="xornada"]:checked')?.value || '-'}\n\n`;
-
-            contenido += `PERMISOS SOLICITADOS\n`;
-            contenido += `Días: ${document.getElementById('dias').value}\n`;
-            contenido += `Data: ${document.getElementById('data').value}\n`;
-            contenido += `Horas: ${document.getElementById('horaDesde').value} - ${document.getElementById('horaAta').value}\n`;
-            const permisos = Array.from(document.querySelectorAll('input[name="permisos"]:checked')).map(e => '- ' + e.value);
-            contenido += permisos.length > 0 ? permisos.join('\n') : '- Ningún permiso seleccionado';
-            contenido += '\n\n';
-
-            contenido += `DOCUMENTACIÓN ANEXADA\n`;
-            const docs = Array.from(document.querySelectorAll('input[name="docs"]:checked')).map(e => '- ' + e.value);
-            contenido += docs.length > 0 ? docs.join('\n') : '- Ningunha documentación';
-            contenido += '\n\n';
-            contenido += `Data: __________________\n`;
-            contenido += `Sinatura: _____________________________\n`;
-            contenido += `Director/a do centro: _____________________________\n`;
-
-            // Descargar como TXT
-            const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `solicitude_permisos_${apellidos}_${nombre}.txt`;
-            link.click();
-            URL.revokeObjectURL(url);
+            let contenido = `
+                <div style="font-family: Arial, sans-serif; padding: 20px;">
+                    <h1>ANEXO V - SOLICITUDE DE PERMISOS E LICENZAS</h1>
+                    <hr>
+                    
+                    <h2>DATOS DO SOLICITANTE</h2>
+                    <p><strong>Apelidos:</strong> ${document.getElementById('apellidos').value}</p>
+                    <p><strong>Nome:</strong> ${document.getElementById('nombre').value}</p>
+                    <p><strong>NIF:</strong> ${document.getElementById('nif').value}</p>
+                    <p><strong>Teléfono:</strong> ${document.getElementById('telefono').value}</p>
+                    <p><strong>Correo:</strong> ${document.getElementById('correo').value}</p>
+                    <p><strong>Corpo:</strong> ${document.getElementById('corpo').value}</p>
+                    <p><strong>Grupo:</strong> ${document.getElementById('grupo').value}</p>
+                    <p><strong>Subgrupo:</strong> ${document.getElementById('subgrupo').value}</p>
+                    <p><strong>Centro de destino:</strong> ${document.getElementById('centro').value}</p>
+                    <p><strong>Relación xurídica:</strong> ${document.querySelector('input[name="relacion"]:checked')?.value || '-'}</p>
+                    <p><strong>Xornada:</strong> ${document.querySelector('input[name="xornada"]:checked')?.value || '-'}</p>
+                    
+                    <h2>PERMISOS SOLICITADOS</h2>
+                    <p><strong>Días:</strong> ${document.getElementById('dias').value}</p>
+                    <p><strong>Data:</strong> ${document.getElementById('data').value}</p>
+                    <p><strong>Horas:</strong> ${document.getElementById('horaDesde').value} - ${document.getElementById('horaAta').value}</p>
+                    
+                    <h3>Tipos de Permisos:</h3>
+                    <ul>
+            `;
+            
+            const permisos = Array.from(document.querySelectorAll('input[name="permisos"]:checked')).map(e => e.value);
+            if (permisos.length > 0) {
+                permisos.forEach(p => {
+                    contenido += `<li>${p}</li>`;
+                });
+            } else {
+                contenido += '<li>Ningún permiso seleccionado</li>';
+            }
+            
+            contenido += `
+                    </ul>
+                    
+                    <h2>DOCUMENTACIÓN ANEXADA</h2>
+                    <ul>
+            `;
+            
+            const docs = Array.from(document.querySelectorAll('input[name="docs"]:checked')).map(e => e.value);
+            if (docs.length > 0) {
+                docs.forEach(d => {
+                    contenido += `<li>${d}</li>`;
+                });
+            } else {
+                contenido += '<li>Ningunha documentación</li>';
+            }
+            
+            contenido += `
+                    </ul>
+                    
+                    <hr>
+                    <p>Data: __________________</p>
+                    <p>Sinatura: _____________________________</p>
+                    <p>Director/a do centro: _____________________________</p>
+                </div>
+            `;
+            
+            const element = document.createElement('div');
+            element.innerHTML = contenido;
+            
+            const opt = {
+                margin: 10,
+                filename: `solicitude_${apellidos}_${nombre}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+            
+            html2pdf().set(opt).from(element).save();
         }
-
-        form.addEventListener('submit', (e) => {
+        
+        function enviarFormulario(e) {
             e.preventDefault();
-            guardarFormulario();
-        });
+            
+            const apellidos = document.getElementById('apellidos').value;
+            const nombre = document.getElementById('nombre').value;
+            const nif = document.getElementById('nif').value;
+            const correo = document.getElementById('correo').value;
+            const telefono = document.getElementById('telefono').value;
+            const corpo = document.getElementById('corpo').value;
+            const grupo = document.getElementById('grupo').value;
+            const subgrupo = document.getElementById('subgrupo').value;
+            const centro = document.getElementById('centro').value;
+            const relacion = document.querySelector('input[name="relacion"]:checked')?.value || '-';
+            const xornada = document.querySelector('input[name="xornada"]:checked')?.value || '-';
+            const dias = document.getElementById('dias').value;
+            const data = document.getElementById('data').value;
+            const horaDesde = document.getElementById('horaDesde').value;
+            const horaAta = document.getElementById('horaAta').value;
+            
+            if (!apellidos || !nombre || !nif || !correo) {
+                document.getElementById('errorMessage').textContent = '❌ Completa os datos obrigatorios: Apelidos, Nome, NIF e Correo';
+                document.getElementById('errorMessage').classList.add('show');
+                return;
+            }
+            
+            if (!correo.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                document.getElementById('errorMessage').textContent = '❌ Correo electrónico inválido';
+                document.getElementById('errorMessage').classList.add('show');
+                return;
+            }
+            
+            const btnEnviar = document.getElementById('btnEnviar');
+            const textoOriginal = btnEnviar.textContent;
+            btnEnviar.disabled = true;
+            btnEnviar.innerHTML = '<span class="loading"></span>Enviando...';
+            
+            const permisos = Array.from(document.querySelectorAll('input[name="permisos"]:checked')).map(e => e.value).join('\n');
+            const docs = Array.from(document.querySelectorAll('input[name="docs"]:checked')).map(e => e.value).join('\n');
+            
+            const timestamp = new Date().toLocaleString('gl-ES');
+            
+            const contenidoEmail = `SOLICITUDE DE PERMISOS E LICENZAS - ANEXO V
+============================================
 
-        // Cargar datos gardados ao abrir
+DATOS DO SOLICITANTE:
+Apelidos: ${apellidos}
+Nome: ${nombre}
+NIF: ${nif}
+Teléfono: ${telefono}
+Corpo: ${corpo}
+Grupo: ${grupo}
+Subgrupo: ${subgrupo}
+Centro de destino: ${centro}
+Relación xurídica: ${relacion}
+Xornada: ${xornada}
+Correo do profesorado: ${correo}
+
+PERMISOS SOLICITADOS:
+Días: ${dias}
+Data: ${data}
+Horas: ${horaDesde} - ${horaAta}
+
+Tipos de permisos:
+${permisos || 'Ningún permiso seleccionado'}
+
+DOCUMENTACIÓN ANEXADA:
+${docs || 'Ningunha documentación'}
+
+Data de envío: ${timestamp}`;
+            
+            // Enviar vía Formspree
+            document.getElementById('mensajeOculto').value = contenidoEmail;
+            
+            // Crear un formulario temporal para enviar
+            const tempForm = document.createElement('form');
+            tempForm.method = 'POST';
+            tempForm.action = 'https://formspree.io/f/xyzpnwqy';
+            
+            const input1 = document.createElement('input');
+            input1.type = 'hidden';
+            input1.name = 'email';
+            input1.value = correo;
+            tempForm.appendChild(input1);
+            
+            const input2 = document.createElement('input');
+            input2.type = 'hidden';
+            input2.name = 'subject';
+            input2.value = `Solicitude de Permisos - ${apellidos} ${nombre}`;
+            tempForm.appendChild(input2);
+            
+            const input3 = document.createElement('input');
+            input3.type = 'hidden';
+            input3.name = 'message';
+            input3.value = contenidoEmail;
+            tempForm.appendChild(input3);
+            
+            const input4 = document.createElement('input');
+            input4.type = 'hidden';
+            input4.name = '_captcha';
+            input4.value = 'false';
+            tempForm.appendChild(input4);
+            
+            document.body.appendChild(tempForm);
+            
+            // Enviar el formulario
+            fetch('https://formspree.io/f/xyzpnwqy', {
+                method: 'POST',
+                body: new FormData(tempForm),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('successMessage').classList.add('show');
+                    document.getElementById('errorMessage').classList.remove('show');
+                    btnEnviar.disabled = false;
+                    btnEnviar.textContent = textoOriginal;
+                    setTimeout(() => {
+                        limpiarFormulario();
+                    }, 2000);
+                } else {
+                    throw new Error('Error en envío');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').textContent = '❌ Erro ao enviar. Intente novamente.';
+                document.getElementById('errorMessage').classList.add('show');
+                btnEnviar.disabled = false;
+                btnEnviar.textContent = textoOriginal;
+            })
+            .finally(() => {
+                document.body.removeChild(tempForm);
+            });
+        }
+        
         window.addEventListener('load', () => {
-            const datosGardados = localStorage.getItem('solicitude_actual');
-            if (datosGardados) {
-                try {
-                    const data = JSON.parse(datosGardados);
-                    Object.keys(data).forEach(key => {
-                        const input = document.getElementById(key);
-                        if (input) input.value = data[key];
-                    });
-                } catch (e) {}
-            }
-        });
-
-        // Gardar borrador automaticamente
-        form.addEventListener('change', () => {
-            const formData = new FormData(form);
-            const data = {};
-            for (let [key, value] of formData.entries()) {
-                data[key] = value;
-            }
-            localStorage.setItem('solicitude_actual', JSON.stringify(data));
+            updateCounts();
+            updateDocList();
         });
     </script>
 </body>
